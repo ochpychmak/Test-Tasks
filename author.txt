@@ -1,3 +1,3 @@
-Roman Shutov
+Shutov Roman
 C++
 
