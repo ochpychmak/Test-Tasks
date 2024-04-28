@@ -4,8 +4,20 @@
 
 const int MAX_ARGS = 3;
 
+int checkArgsAmount(int argc)
+{
+	if (argc != MAX_ARGS)
+	{
+		std::cerr << "The number of arguments is either more or less than 2.";
+		return argc;
+	}
+	return 0;
+}
+
 int main(int argc, char* argv[])
 {
+	checkArgsAmount(argc);
+
 	const int ARRAY_SIZE = std::stoi(argv[1]);
 	std::vector<int> array;
 
