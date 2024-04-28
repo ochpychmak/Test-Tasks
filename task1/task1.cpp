@@ -18,19 +18,19 @@ int main(int argc, char* argv[])
 {
 	checkArgsAmount(argc);
 
-	const int ARRAY_SIZE = std::stoi(argv[1]); // n
-	std::vector<int> array(ARRAY_SIZE);
+	const int ARRAY_SIZE = std::stoi(argv[1]);
+	std::vector<int> array;
 
 	for (int i = 0; i < ARRAY_SIZE; i++) {
-		array[i] = i + 1;
+		array.push_back(i + 1);
 	}
 
-	const int KEY = std::stoi(argv[2]) - 1; // m
+	const int KEY = std::stoi(argv[2]) - 1;
 
 	int result = 0;
 	int index = 0;
 	do {
-		result = (result + array[index]); // key = 4
+		result = (result + array[index]);
 		index += KEY;
 		if (index >= ARRAY_SIZE) {
 			index %= ARRAY_SIZE;
