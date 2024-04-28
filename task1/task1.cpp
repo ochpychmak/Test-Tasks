@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 
-const int MAX_ARGS = 3;
-
 int main(int argc, char* argv[])
 {
 	const int ARRAY_SIZE = std::stoi(argv[1]);
