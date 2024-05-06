@@ -2,74 +2,75 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
 
 // Boost required: https://www.boost.org/
 
 using namespace std;
 using namespace boost::multiprecision;
 
-enum class Dot {
-	IS_ON_CIRCLE,
-	IS_INSIDE,
-	IS_OUTSIDE
+struct Dot
+{
+	cpp_dec_float_100 x, y;
 };
 
-std::vector<std::pair<cpp_int, cpp_int>> parseCoords(fstream& dots) {
-	std::vector<std::pair<cpp_int, cpp_int>> coords;
-	std::string line;
+struct Circle
+{
+	cpp_dec_float_100 x, y, radius;
+};
 
-	while (std::getline(dots, line)) {
-		std::istringstream iss(line);
-		cpp_int x, y;
-		if (iss >> x >> y) {
-			coords.emplace_back(x, y);
-		}
-		if (coords.size() >= 100) {
-			break;
-		}
+enum class DotIs
+{
+	ON_CIRCLE,
+	INSIDE,
+	OUTSIDE
+};
+
+void parseDots(fstream &dotsFile, vector<Dot> &dots)
+{
+	string line;
+	while (getline(dotsFile, line))
+	{
+		Dot dot;
+		istringstream iss(line);
+		iss >> dot.x >> dot.y;
+		dots.push_back(dot);
 	}
-
-	return coords;
 }
 
-Dot dotPosition(cpp_int& circleX, cpp_int& circleY, cpp_int& radius, cpp_int& dotX, cpp_int& dotY) {
-	cpp_int sqrDistance = (dotX - circleX) * (dotX - circleX) + (dotY - circleY) * (dotY - circleY);
-
-	if (sqrDistance < radius * radius) {
-		return Dot::IS_INSIDE;
-	}
-	else if (sqrDistance == radius * radius) {
-		return Dot::IS_ON_CIRCLE;
-	}
-	else {
-		return Dot::IS_OUTSIDE;
+void printDotsPosition(const vector<Dot> &dots, const Circle &circle)
+{
+	for (auto const &dot : dots)
+	{
+		cpp_dec_float_100 distance = sqrt(pow(dot.x - circle.x, 2) + pow(dot.y - circle.y, 2));
+		if (distance == circle.radius)
+		{
+			cout << static_cast<int>(DotIs::ON_CIRCLE);
+		}
+		else if (distance < circle.radius)
+		{
+			cout << static_cast<int>(DotIs::INSIDE);
+		}
+		else
+		{
+			cout << static_cast<int>(DotIs::OUTSIDE);
+		}
+		cout << endl;
 	}
 }
 
 int main(int argc, char* argv[]) {
-	string circlePath = argv[1];
-	string dotsPath = argv[2];
+	fstream circleData(argv[1]);
+	Circle circle;
+	circleData >> circle.x >> circle.y >> circle.radius;
+	circleData.close();
 
-	fstream circle(circlePath);
+	fstream dotsFile(argv[2]);
+	vector<Dot> dots;
+	parseDots(dotsFile, dots);
+	dotsFile.close();
 
-	string line;
-	getline(circle, line);
-	istringstream iss(line);
-	cpp_int x, y;
-	iss >> x >> y;
-
-	getline(circle, line);
-	cpp_int radius(line);
-
-	fstream dots(dotsPath);
-	std::vector<std::pair<cpp_int, cpp_int>> dotsCoords = parseCoords(dots);
-
-	for (auto& coord : dotsCoords) {
-		cout << static_cast<int>(dotPosition(x, y, radius, coord.first, coord.second)) << "\n";
-	}
-
-	circle.close();
+	printDotsPosition(dots, circle);
 
 	return 0;
 }
