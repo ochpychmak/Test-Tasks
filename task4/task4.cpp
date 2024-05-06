@@ -1,44 +1,45 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <sstream>
 
 using namespace std;
 
-vector<int> getNumbers(const string& filename) {
-    vector<int> nums;
-    ifstream file(filename);
-    string line;
-    while (getline(file, line)) {
-        int number;
-        nums.push_back(stoi(line));
+void parseFile(fstream &file, vector<int64_t> &nums)
+{
+    int64_t num;
+    while (file >> num)
+    {
+        nums.push_back(num);
     }
+}
+
+int64_t getAvg(vector<int64_t> &nums)
+{
+    int64_t sum = 0;
+    for (const auto i : nums)
+    {
+        sum += i;
+    }
+    return static_cast<double> (sum) / nums.size();
+}
+
+int64_t getMoves(const vector<int64_t> &nums, const int64_t &avg)
+{
+    int64_t moves = 0;
+    for (const auto i : nums)
+    {
+        moves += abs(i - avg);
+    }
+    return moves;
+}
+
+int main(int argc, char *argv[])
+{
+    fstream file(argv[1]);
+    vector<int64_t> nums;
+    parseFile(file, nums);
     file.close();
-    return nums;
-}
-
-int getAvg(const vector<int>& nums) {
-    int sum = 0;
-    for (int num : nums) {
-        sum += num;
-    }
-    return sum / nums.size();
-}
-
-int calcMoves(const vector<int>& nums, int avg) {
-    int total = getAvg(nums);
-    int steps = 0;
-    for (int num : nums) {
-        steps += abs(num - avg);
-    }
-    return steps;
-}
-
-int main(int argc, char *argv[]) {
-    const string filename = argv[1];
-    vector<int> nums = getNumbers(filename);
-    int avg = getAvg(nums);
-    int moves = calcMoves(nums, avg);
-    cout << moves;
+    int64_t avg = getAvg(nums);
+    cout << getMoves(nums, avg);
     return 0;
 }
