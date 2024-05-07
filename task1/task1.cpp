@@ -2,31 +2,28 @@
 #include <string>
 #include <vector>
 
-int main(int argc, char* argv[])
+using namespace std;
+
+int main(int argc, char *argv[])
 {
-	const int ARRAY_SIZE = std::stoi(argv[1]);
-	std::vector<int> array;
-
-	for (int i = 0; i < ARRAY_SIZE; i++) {
-		array.push_back(i + 1);
+	const uint64_t ARRAY_SIZE = stoi(argv[1]);
+	vector<uint64_t> nums;
+	for (uint64_t i = 1; i <= ARRAY_SIZE; i++)
+	{
+		nums.push_back(i);
 	}
-
-	const int KEY = std::stoi(argv[2]) - 1;
-
-	int result = 0;
-	int index = 0;
-	do {
-		result = (result + array[index]);
+	string result;
+	uint64_t index = 0;
+	const uint64_t KEY = stoi(argv[2]) - 1;
+	do
+	{
+		result += to_string(nums[index]);
 		index += KEY;
-		if (index >= ARRAY_SIZE) {
+		if (index >= ARRAY_SIZE)
+		{
 			index %= ARRAY_SIZE;
 		}
-		if (index > 0) {
-			result *= 10;
-		}
-	} while (index > 0);
-
-	std::cout << result;
-
+	} while (index != 0);
+	cout << result;
 	return 0;
 }
